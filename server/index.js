@@ -9,45 +9,45 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// const map = new Map()
+// app.post("/api/create-short-url", async (req,res)=>{
+// 	let uniqueID = randomString(8);
+// 	let sql = `INSERT INTO links(longurl,shorturlid) VALUES('${}','${}')`;
+//   await pool.query(
+//     `INSERT INTO links(id,shorturlid) VALUES('${}','${}')`
+//   );
 
-// app.post("/shorten", async (req, res) => {
-//   const originalUrl = req.body.url;
-//   const code = randomString.generate(8);
-//   // map.set(code, originalUrl)
-
-//   const link = await Link.create({
-//     originalURL: originalUrl,
-//     shortenedURL: `http://localhost:8000/${code}`,
-//     visited: 0,
-//     code: code,
-//   });
-
-//   return res.status(200).json({ shortenLink: link.shortenedURL });
 // });
-
-// app.get("/:id", async (req, res) => {
-//   const ID = req.params.id;
-//   console.log(ID);
-//   // return res.status(200).json({
-//   //     originalUrl: map.get(ID)
-//   // })
-
-//   // return res.redirect(map.get(ID))
-
-//   const link = await Link.findOne({ code: ID });
-//   link.visited++;
-//   link.save();
-
-//   return res.redirect(link.originalURL);
-// });
-app.get("/url", async (req, res) => {
+function isExpired(createdAt) {
+  const expirationTime = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+  const currentTime = new Date().getTime();
+  return currentTime - new Date(createdAt).getTime() > expirationTime;
+}
+app.get("/:id", async (req, res) => {
   try {
-    const userEmail = "test@test.com";
+    const ID = req.params.id;
+
+    const link = await pool.query(`SELECT * FROM urls where code = $1`, [ID]);
+    if (!isExpired(link.rows[0].date)) {
+      await pool.query(
+        `UPDATE urls SET clicks=${link.rows[0].clicks + 1} WHERE  code = $1`,
+        [ID]
+      );
+
+      return res.redirect(link.rows[0].original_url);
+    } else {
+      return res.json({ message: "Link expired" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.get("/v1/urls/:user", async (req, res) => {
+  try {
+    const { user } = req.params;
     const urls = await pool.query(`SELECT * FROM urls where user_email = $1`, [
-      userEmail,
+      user,
     ]);
-    console.log(urls.rows);
+    // console.log(urls.rowCount);
     res.send(urls.rows);
   } catch (error) {
     console.log(error);
@@ -56,6 +56,3 @@ app.get("/url", async (req, res) => {
 app.listen(port, () => {
   console.log(`server http://localhost:${port}`);
 });
-// mongoDB.then(() => {
-
-// });
