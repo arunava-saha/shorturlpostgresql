@@ -9,14 +9,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// app.post("/api/create-short-url", async (req,res)=>{
-// 	let uniqueID = randomString(8);
-// 	let sql = `INSERT INTO links(longurl,shorturlid) VALUES('${}','${}')`;
-//   await pool.query(
-//     `INSERT INTO links(id,shorturlid) VALUES('${}','${}')`
-//   );
-
-// });
+app.post("/api/create-short-url/:user", async (req, res) => {
+  try {
+    let uniqueID = randomString.generate(8);
+    const { user } = req.params;
+    await pool.query(
+      `INSERT INTO urls(id, user_email, original_url, code, clicks, date ) VALUES('${uniqueID}','${user}', '${
+        req.body.original_url
+      }', '${uniqueID}', '${0}', '${Date.now()}')`
+    );
+    return res.json({ message: "Done", code: uniqueID });
+  } catch (error) {
+    console.log(error);
+  }
+});
 function isExpired(createdAt) {
   const expirationTime = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
   const currentTime = new Date().getTime();
