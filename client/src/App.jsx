@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-
+import { NavBar } from "./components/NavBar";
+import { List } from "./components/List";
+const backendUrl = "http://localhost:8000";
+export { backendUrl };
 const App = () => {
-  const backendUrl = "http://localhost:8000";
   const [urls, setUrls] = useState([]);
+  const user = "test@test.com";
   const getUrls = async () => {
-    const user = "test@test.com";
     try {
       const res = await fetch(`${backendUrl}/v1/urls/${user}`);
       const data = await res.json();
@@ -17,11 +19,8 @@ const App = () => {
   useEffect(() => getUrls, []);
   return (
     <div>
-      {urls.map((el, i) => (
-        <div key={i}>
-          <p>{backendUrl + "/" + el.code}</p>
-        </div>
-      ))}
+      <NavBar />
+      <List user={user} urls={urls} />
     </div>
   );
 };

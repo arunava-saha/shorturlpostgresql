@@ -9,14 +9,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/api/create-short-url/:user", async (req, res) => {
+app.post("/api/create-short-url", async (req, res) => {
   try {
     let uniqueID = randomString.generate(8);
-    const { user } = req.params;
+    const { user_email, original_url } = req.body;
     await pool.query(
-      `INSERT INTO urls(id, user_email, original_url, code, clicks, date ) VALUES('${uniqueID}','${user}', '${
-        req.body.original_url
-      }', '${uniqueID}', '${0}', '${Date.now()}')`
+      `INSERT INTO urls(id, user_email, original_url, code, clicks, date ) VALUES('${uniqueID}','${user_email}', '${original_url}', '${uniqueID}', '${0}', '${Date()}')`
     );
     return res.json({ message: "Done", code: uniqueID });
   } catch (error) {
