@@ -13,14 +13,3 @@ CREATE TABLE users (
     email VARCHAR(255) PRIMARY KEY,
     hashed_password VARCHAR(255) 
 );
--- Create a job that runs every 24 hours
-CREATE OR REPLACE PROCEDURE delete_old_records()
-BEGIN
-    DELETE FROM your_table
-    WHERE timestamp_column < CURRENT_TIMESTAMP - INTERVAL '48 hours';
-END;
-
--- Schedule the job to run every 24 hours
-CREATE EVENT IF NOT EXISTS delete_old_records_event
-ON SCHEDULE EVERY 24 HOUR
-DO CALL delete_old_records();

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-
+import { backendUrl } from "../App";
 const Model = ({ user }) => {
   const [data, setData] = useState({
     original_url: "",
     user_email: user,
   });
+  const [shortId, setShortId] = useState(null);
   const postData = async (e) => {
     try {
       e.preventDefault();
@@ -15,7 +16,7 @@ const Model = ({ user }) => {
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      console.log(result);
+      setShortId(result.code);
     } catch (error) {
       console.log(error);
     }
@@ -42,6 +43,9 @@ const Model = ({ user }) => {
           />
           <button>submit</button>
         </form>
+        {shortId && (
+          <a href={`${backendUrl}/${shortId}`}>{backendUrl + "/" + shortId}</a>
+        )}
       </div>
     </div>
   );

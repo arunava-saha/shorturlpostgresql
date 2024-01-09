@@ -1,5 +1,7 @@
 const express = require("express");
 const randomString = require("randomstring");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const pool = require("./db");
 // const Link = require('./model/link')
@@ -61,8 +63,17 @@ app.get("/v1/urls/:user", async (req, res) => {
 app.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
+    const salt = bcrypt.genSaltSync(8);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+    const signup = await pool.query(
+      `INSERT INTO users(email, hashed_password ) VALUES('${email}',  '${hashedPassword}')`
+    );
+    const token = jwt.sign({ email }, "secret", { expiresIn: "2hr" });
+    return res.json({ email, token });
   } catch (error) {
-    console.log(error);
+    if (error) {
+      res.json({ details: error.detail });
+    }
   }
 });
 app.post("/login", async (req, res) => {

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { backendUrl } from "../App";
-
+import { useCookies } from "react-cookie";
 export const Auth = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(null);
   const [error, setError] = useState(null);
-  const [email, setEmalr] = useState(null);
+  const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [conformPassword, setConformPassword] = useState(null);
   const [isLogin, setIsLogin] = useState(true);
@@ -24,22 +25,37 @@ export const Auth = () => {
     });
     const data = await res.json();
     console.log(data);
+    if (data.details) {
+      setError(data.details);
+    } else {
+      setCookie("Email", data.email);
+      setCookie("authToken", data.token);
+
+      window.location.reload();
+    }
   };
   return (
     <div className="auth">
       <div className="auth-box">
         <form>
           <h2>{isLogin ? "PLease log in" : "Please sign up"}</h2>
-          <input type="email" name="email" placeholder="Enter your email" />
+          <input
+            type="email"
+            name="email"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+          />
           <input
             type="password"
             name="password"
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
           />
           {!isLogin && (
             <input
               type="password"
               name="password"
+              onChange={(e) => setConformPassword(e.target.value)}
               placeholder="Conform your password"
             />
           )}
