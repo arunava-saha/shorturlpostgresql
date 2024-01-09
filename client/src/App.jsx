@@ -21,7 +21,7 @@ const App = () => {
     }
   };
   useEffect(() => {
-    authToken && getUrls;
+    authToken && getUrls();
   }, []);
   return (
     <div>
