@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { NavBar } from "./components/NavBar";
 import { List } from "./components/List";
+import { Auth } from "./components/Auth";
 const backendUrl = "http://localhost:8000";
 export { backendUrl };
 const App = () => {
   const [urls, setUrls] = useState([]);
   const user = "test@test.com";
+  const authToken = false;
   const getUrls = async () => {
     try {
       const res = await fetch(`${backendUrl}/v1/urls/${user}`);
@@ -19,8 +21,16 @@ const App = () => {
   useEffect(() => getUrls, []);
   return (
     <div>
-      <NavBar />
-      <List user={user} urls={urls} />
+      {authToken ? (
+        <>
+          <NavBar />
+          <List user={user} urls={urls} />
+        </>
+      ) : (
+        <>
+          <Auth />
+        </>
+      )}
     </div>
   );
 };
