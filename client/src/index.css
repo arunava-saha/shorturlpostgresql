@@ -31,10 +31,12 @@ body {
 }
 .navHead {
   color: green;
+  text-transform: uppercase;
 }
 .sign-out {
   background-color: red;
   border: none;
+  border-radius: 10px;
   font-size: large;
 }
 .list {
@@ -64,8 +66,9 @@ body {
   width: 100%;
   display: flex;
   justify-items: center;
-  align-items: start;
+  align-items: center;
   flex-direction: column;
+  flex-wrap: wrap;
   margin-top: 1rem;
 }
 .url-item {
@@ -131,7 +134,8 @@ button {
   background: #fff;
   padding: 0.5rem;
   color: #000;
-  border-radius: 20%;
+  border-radius: 20px;
+  font-weight: 600;
   cursor: pointer;
   text-transform: uppercase;
 }
