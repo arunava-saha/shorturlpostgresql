@@ -57,6 +57,21 @@ app.get("/v1/urls/:user", async (req, res) => {
     console.log(error);
   }
 });
+// auth
+app.post("/signup", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+  } catch (error) {
+    console.log(error);
+  }
+});
 app.listen(port, () => {
   console.log(`server http://localhost:${port}`);
 });

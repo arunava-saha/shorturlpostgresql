@@ -1,11 +1,29 @@
 import React, { useState } from "react";
+import { backendUrl } from "../App";
 
 export const Auth = () => {
   const [error, setError] = useState(null);
+  const [email, setEmalr] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [conformPassword, setConformPassword] = useState(null);
   const [isLogin, setIsLogin] = useState(true);
   const viewLogin = (status) => {
     setError(null);
     setIsLogin(status);
+  };
+  const handleSubmit = async (e, endpoint) => {
+    e.preventDefault();
+    if (!isLogin && password !== conformPassword) {
+      setError("Password doesn't match!");
+      return;
+    }
+    const res = await fetch(`${backendUrl}/${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    console.log(data);
   };
   return (
     <div className="auth">
@@ -25,29 +43,41 @@ export const Auth = () => {
               placeholder="Conform your password"
             />
           )}
-          <input type="submit" className="create" />
+          <input
+            type="submit"
+            onClick={(e) => handleSubmit(e, isLogin ? "login" : "signup")}
+            className="create"
+          />
           {error && <p>{error}</p>}
         </form>
         <div className="auth-options">
           <button
             style={{
-              background: !isLogin
-                ? "rgb(255, 255, 255)"
-                : "rgb(188, 188, 188)",
+              background: !isLogin ? "rgb(55, 205, 55)" : "rgb(205, 55, 55)",
+              borderRadius: "20px",
+              border: "none",
+              color: "rgb(15, 25, 55)",
+              fontSize: "medium",
+              fontWeight: "600",
+              margin: "10px",
             }}
             onClick={() => viewLogin(false)}
           >
-            Sign Up
+            click to Sign Up Page
           </button>
           <button
             style={{
-              background: !isLogin
-                ? "rgb(255, 255, 255)"
-                : "rgb(188, 188, 188)",
+              background: isLogin ? "rgb(55, 205, 55)" : "rgb(205, 55, 55)",
+              borderRadius: "20px",
+              border: "none",
+              color: "rgb(15, 25, 55)",
+              fontSize: "medium",
+              fontWeight: "600",
+              margin: "10px",
             }}
             onClick={() => viewLogin(true)}
           >
-            Login
+            click to Login Page
           </button>
         </div>
       </div>

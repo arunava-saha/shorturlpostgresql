@@ -18,7 +18,9 @@ const App = () => {
       console.log(error);
     }
   };
-  useEffect(() => getUrls, []);
+  useEffect(() => {
+    authToken && getUrls;
+  }, []);
   return (
     <div>
       {authToken ? (
@@ -28,7 +30,9 @@ const App = () => {
         </>
       ) : (
         <>
-          <Auth />
+          <div className="containerDiv">
+            <Auth />
+          </div>
         </>
       )}
     </div>
